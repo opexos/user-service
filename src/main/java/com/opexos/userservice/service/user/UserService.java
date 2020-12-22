@@ -10,15 +10,19 @@ import com.opexos.userservice.service.photo.PhotoService;
 import com.opexos.userservice.service.user.dto.UserDTO;
 import com.opexos.userservice.service.user.dto.UserEditDTO;
 import com.opexos.userservice.service.user.elastic.ElUser;
-import com.opexos.userservice.service.user.elastic.ElUserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.*;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +38,7 @@ public class UserService {
     private final ImageService imageService;
     private final MessageSourceAccessor message;
     private final PhotoService photoService;
-    private final ElUserRepository elUserRepository;
+    private final ElasticsearchOperations elasticsearchOperations;
 
     @Transactional
     public UserDTO createUser(@NonNull UserEditDTO dto, byte[] photo) {
@@ -53,7 +57,7 @@ public class UserService {
             throw new NotFoundException();
         }
         userRepository.deleteById(userId);
-        elUserRepository.deleteById(userId);
+        elasticsearchOperations.delete(String.valueOf(userId), ElUser.class);
         photoService.deletePhoto(userId);
     }
 
@@ -68,24 +72,47 @@ public class UserService {
     public Page<UserDTO> getUsers(@NonNull UserFilter filter,
                                   @NonNull Pagination pagination) {
 
+        elasticSearch:
         if (filter.getFullName() != null) {
-            PageRequest pageable = PageRequest.of(
+            //delete all digits and special characters
+            String fullName = filter.getFullName()
+                    .replaceAll("[\\d`~!@#$%^&*()_=+{}\\\\|\\[\\]?<>,./;:\"'-]", "")
+                    .trim();
+
+            if (fullName.isEmpty()) {
+                //no string to search
+                break elasticSearch;
+            }
+
+            Pageable pageable = PageRequest.of(
                     pagination.getPageNum(),
                     pagination.getPageSize(),
                     Sort.sort(ElUser.class).by(ElUser::getUserId));
 
-            //search users in elastic by full name
-            Page<ElUser> users = elUserRepository.findByFullNameLike(filter.getFullName(), pageable);
+            Criteria criteria = Arrays.stream(fullName.split(" "))
+                    .map(String::trim)
+                    .filter(it -> !it.isEmpty())
+                    .reduce(new Criteria(),
+                            (cr, str) -> cr.and("fullName").contains(str),
+                            Criteria::and);
+
+            //unfortunately we can't build a complex query with pagination using repository
+            SearchHits<ElUser> hits = elasticsearchOperations.search(
+                    new CriteriaQuery(criteria, pageable), ElUser.class);
+
+            //collect user ids
+            List<Long> userIds = hits.getSearchHits().stream()
+                    .map(it -> it.getContent().getUserId())
+                    .collect(Collectors.toList());
 
             //get data from db
-            List<Long> userIds = users.getContent().stream().map(ElUser::getUserId).collect(Collectors.toList());
             List<UserDTO> usersDb = userRepository.findAllByUserIdIn(userIds, UserListProjection.class)
                     .stream()
                     .sorted(Comparator.comparingLong(UserListProjection::getUserId))
                     .map(userMapper::toDTO).collect(Collectors.toList());
 
             //return result
-            return new PageImpl<>(usersDb, users.getPageable(), users.getTotalElements());
+            return new PageImpl<>(usersDb, pageable, hits.getTotalHits());
         }
 
 
@@ -122,11 +149,10 @@ public class UserService {
         userMapper.fill(user, dto);
         userRepository.save(user);
 
-        elUserRepository.save(ElUser.builder()
+        elasticsearchOperations.save(ElUser.builder()
                 .userId(user.getUserId())
                 .fullName(user.getFullName())
                 .build());
-
 
         if (PhotoAction.UPLOAD.equals(dto.getPhotoAction())) {
             photoService.savePhoto(user.getUserId(), photo);
