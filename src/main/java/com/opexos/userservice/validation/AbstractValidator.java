@@ -29,7 +29,7 @@ public abstract class AbstractValidator<A extends Annotation, T> implements Cons
         return contextWrapper.isValid();
     }
 
-    abstract void doValidation(T value, ConstraintValidatorContextWrapper context);
+    protected abstract void doValidation(T value, ConstraintValidatorContextWrapper context);
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> getRequestPathVariables() {

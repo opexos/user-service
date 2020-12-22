@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user.elastic;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

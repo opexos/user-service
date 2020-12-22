@@ -1,4 +1,4 @@
-package com.opexos.userservice.validation;
+package com.opexos.userservice.service.user.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

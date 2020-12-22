@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.configuration;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;

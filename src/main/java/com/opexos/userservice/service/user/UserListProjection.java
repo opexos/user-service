@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user;
 
 public interface UserListProjection {
     Long getUserId();

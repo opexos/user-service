@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user.elastic;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +10,11 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Builder
 @Data
 @Document(indexName = "users")
-class ElUser {
+public class ElUser {
     @Id
     private Long userId;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String fullName;
 
 }

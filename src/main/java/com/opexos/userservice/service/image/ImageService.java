@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.image;
 
 import com.opexos.userservice.exception.InvalidImageException;
 import lombok.NonNull;

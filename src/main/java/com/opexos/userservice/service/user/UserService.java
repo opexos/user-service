@@ -1,8 +1,16 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user;
 
+import com.opexos.userservice.common.Pagination;
+import com.opexos.userservice.configuration.UserServiceProperties;
 import com.opexos.userservice.exception.BadRequestException;
 import com.opexos.userservice.exception.InvalidImageException;
 import com.opexos.userservice.exception.NotFoundException;
+import com.opexos.userservice.service.image.ImageService;
+import com.opexos.userservice.service.photo.PhotoService;
+import com.opexos.userservice.service.user.dto.UserDTO;
+import com.opexos.userservice.service.user.dto.UserEditDTO;
+import com.opexos.userservice.service.user.elastic.ElUser;
+import com.opexos.userservice.service.user.elastic.ElUserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

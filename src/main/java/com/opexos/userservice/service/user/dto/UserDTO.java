@@ -1,5 +1,6 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user.dto;
 
+import com.opexos.userservice.service.user.Sex;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;

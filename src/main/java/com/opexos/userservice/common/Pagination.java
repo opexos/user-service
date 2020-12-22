@@ -1,4 +1,4 @@
-package com.opexos.userservice;
+package com.opexos.userservice.common;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Data;

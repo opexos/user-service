@@ -1,5 +1,6 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.photo;
 
+import com.opexos.userservice.configuration.UserServiceProperties;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,9 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Service for working with user photos
+ */
 @RequiredArgsConstructor
 @Service
 public class PhotoService {

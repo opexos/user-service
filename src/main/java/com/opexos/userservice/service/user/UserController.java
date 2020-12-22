@@ -1,5 +1,8 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user;
 
+import com.opexos.userservice.common.Pagination;
+import com.opexos.userservice.service.user.dto.UserDTO;
+import com.opexos.userservice.service.user.dto.UserEditDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

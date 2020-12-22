@@ -1,5 +1,7 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user;
 
+import com.opexos.userservice.service.user.dto.UserDTO;
+import com.opexos.userservice.service.user.dto.UserEditDTO;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 

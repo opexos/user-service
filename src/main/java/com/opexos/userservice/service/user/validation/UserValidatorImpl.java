@@ -1,7 +1,9 @@
-package com.opexos.userservice.validation;
+package com.opexos.userservice.service.user.validation;
 
-import com.opexos.userservice.UserEditDTO;
-import com.opexos.userservice.UserRepository;
+import com.opexos.userservice.service.user.UserRepository;
+import com.opexos.userservice.service.user.dto.UserEditDTO;
+import com.opexos.userservice.validation.AbstractValidator;
+import com.opexos.userservice.validation.ConstraintValidatorContextWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,7 @@ public class UserValidatorImpl extends AbstractValidator<UserValidator, UserEdit
     private final UserRepository userRepository;
 
     @Override
-    void doValidation(UserEditDTO value, ConstraintValidatorContextWrapper context) {
+    protected void doValidation(UserEditDTO value, ConstraintValidatorContextWrapper context) {
         HttpMethod method = getRequestMethod();
 
         //check the uniqueness of the user name

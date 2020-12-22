@@ -1,6 +1,8 @@
-package com.opexos.userservice;
+package com.opexos.userservice.service.user.dto;
 
-import com.opexos.userservice.validation.UserValidator;
+import com.opexos.userservice.service.user.PhotoAction;
+import com.opexos.userservice.service.user.Sex;
+import com.opexos.userservice.service.user.validation.UserValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
